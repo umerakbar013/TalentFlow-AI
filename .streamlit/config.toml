@@ -1,0 +1,11 @@
+[theme]
+# InventaCore Cyber-Dark Theme
+primaryColor = "#00E5FF"
+backgroundColor = "#0B0F19"
+secondaryBackgroundColor = "#1A2235"
+textColor = "#FFFFFF"
+font = "sans serif"
+
+[client]
+# Removes the "Manage App" toolbar for a cleaner look
+toolbarMode = "minimal"
