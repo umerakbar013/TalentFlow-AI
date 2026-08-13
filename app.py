@@ -222,6 +222,7 @@ elif st.session_state.stage == ApplicationStage.INTERVIEW:
             
             st.session_state.audit_log.append({
                 "turn": st.session_state.question_count, 
+                "turn": st.session_state.question_count, 
                 "transcript": transcript, 
                 "audio_path": audio_path
             })
@@ -231,7 +232,29 @@ elif st.session_state.stage == ApplicationStage.INTERVIEW:
             if st.session_state.question_count <= 3:
                 st.rerun()
             else:
-                st.session_state.stage = ApplicationStage.NEGOTIATION
+                # --- NLP EVALUATION LAYER ---
+                # Combine all candidate answers into one string
+                combined_transcript = " ".join([log["transcript"].lower() for log in st.session_state.audit_log])
+                
+                # Technical lexicon expected from an Agentic AI Engineer
+                expected_keywords = [
+                    "memory", "vector", "faiss", "database", "agent", "prompt", 
+                    "injection", "guardrail", "validation", "metrics", "accuracy", 
+                    "f1", "deployment", "api", "framework", "llm", "context", "rag"
+                ]
+                
+                # Calculate technical depth score
+                matches = sum(1 for word in expected_keywords if word in combined_transcript)
+                
+                if matches >= 2:
+                    # Passed the technical screen
+                    st.session_state.stage = ApplicationStage.NEGOTIATION
+                else:
+                    # Failed: Garbage input (like "hello") or non-technical answers
+                    st.session_state.final_score = 35 
+                    st.session_state.hr_decision = "Rejected"
+                    st.session_state.stage = ApplicationStage.OFFER_ISSUED 
+                
                 st.rerun()
                 
     with col2:
